@@ -3,44 +3,30 @@ const porta = 3000
 
 const app = express()
 
+let tarefas = ['Comprar Comida', 'Cozinhar Comida', 'Comer Comida']
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
-  let hoje = new Date()
-  let diaSemana = hoje.getDay()
-  let dia = ''
-
-  switch (diaSemana) {
-    case 0:
-      dia = 'domingo'
-      break
-    case 1:
-      dia = 'segunda-feira'
-      break
-    case 2:
-      dia = 'terça-feira'
-      break
-    case 3:
-      dia = 'quarta-feira'
-      break
-    case 4:
-      dia = 'quinta-feira'
-      break
-    case 5:
-      dia = 'sexta-feira'
-      break
-    case 6:
-      dia = 'sábado'
-      break
-    default:
-      console.log(`Erro: dia atual é ${dia}.`)
-      break
+  let opcoes = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
   }
 
-  res.render('lista', { tipoDia: dia })
+  let hoje = new Date()
+  let dia = hoje.toLocaleDateString('pt-BR', opcoes)
+
+  res.render('lista', { dataCompleta: dia, minhasTarefas: tarefas })
+})
+
+app.post('/', (req, res) => {
+  let tarefa = req.body.tarefa
+  tarefas.push(tarefa)
+  res.redirect('/')
 })
 
 app.listen(porta, () => {
