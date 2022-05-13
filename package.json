@@ -1,0 +1,16 @@
+{
+  "name": "todo-list-v1",
+  "version": "1.0.0",
+  "description": "App de lista de tarefas a fazer.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "author": "Diego Moura Torres",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1"
+  }
+}
