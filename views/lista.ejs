@@ -4,31 +4,33 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/estilos.css">
     <title>To Do List App</title>
   </head>
   <body>
+    
     <!-- Título da lista de tarefas -->
-    <% if (dataCompleta === 'Domingo' || dataCompleta === 'Sábado') { %>
-      <h1 style="color: purple"><%= dataCompleta %></h1>
-    <% } else { %>
-      <h1 style="color: dodgerBlue"><%= dataCompleta %></h1>
-    <% } %>
+    <div class="box" id="heading">
+      <h1><%= dataCompleta %> </h1>
+    </div>
     <!-- Fim do Título da lista de tarefas -->
 
     <!-- Lista de tarefas -->
-    <ul>
+    <div class="box">
       <% minhasTarefas.forEach(tarefa => { %>
-       <li><%= tarefa %> </li>
+        <div class="item">
+          <input type="checkbox">
+          <p><%= tarefa %></p>
+        </div>
       <% }) %>
-    </ul>
+      <!-- Campo para inserir nova tarefa -->
+      <form action="/" method="post">
+        <input type="text" name="tarefa" placeholder="Nova tarefa" autocomplete="off">
+        <button type="submit">+</button>
+      </form>
+      <!-- Fim do Campo para inserir nova tarefa -->
+    </div>
     <!-- Fim da Lista de tarefas -->
-
-    <!-- Campo para inserir nova tarefa -->
-    <form action="/" method="post">
-      <input type="text" name="tarefa" id="tarefa">
-      <button type="submit">Adicionar</button>
-    </form>
-    <!-- Fim do Campo para inserir nova tarefa -->
 
   </body>
 </html>
