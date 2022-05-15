@@ -1,10 +1,13 @@
 const express = require('express')
+const path = require('path')
 const porta = 3000
+
+const data = require(path.join(__dirname, '/data.js'))
 
 const app = express()
 
-let tarefas = ['Comprar Comida', 'Cozinhar Comida', 'Comer Comida']
-let tarefasTrabalho = []
+const tarefas = ['Comprar Comida', 'Cozinhar Comida', 'Comer Comida']
+const tarefasTrabalho = []
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -13,15 +16,7 @@ app.use(express.static('public'))
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
-  let opcoes = {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }
-
-  let hoje = new Date()
-  let dia = hoje.toLocaleDateString('pt-BR', opcoes)
-
+  const dia = data.obterDataCompleta()
   res.render('lista', { tituloLista: dia, minhasTarefas: tarefas })
 })
 
