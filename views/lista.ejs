@@ -1,4 +1,5 @@
 <%- include('header') -%> 
+
     <!-- Título da lista de tarefas -->
     <div class="box" id="heading">
       <h1><%= tituloLista %> </h1>
@@ -10,15 +11,18 @@
       <% minhasTarefas.forEach(tarefa => { %>
         <div class="item">
           <input type="checkbox">
-          <p><%= tarefa %></p>
+          <p><%= tarefa.nome %></p>
         </div>
       <% }) %>
+
       <!-- Campo para inserir nova tarefa -->
       <form action="/" method="post">
         <input type="text" name="tarefa" placeholder="Nova tarefa" autocomplete="off">
         <button type="submit" name="lista" value=<%= tituloLista %>>+</button>
       </form>
       <!-- Fim do Campo para inserir nova tarefa -->
+
     </div>
     <!-- Fim da Lista de tarefas -->
+    
 <%- include('footer') -%> 
