@@ -20,10 +20,7 @@ const porta = process.env.PORT || 3000
 const conectarDB = require('./config/db')
 
 // Importa o arquivo que contém os modelos
-const Tarefa = require('./models/tarefasModel')
-
-// Importa o módulo de data
-const data = require(path.join(__dirname, '/data.js'))
+const { Tarefa, Lista } = require('./models/tarefasModel')
 
 // Cria uma instância do express
 const app = express()
@@ -57,8 +54,6 @@ const tarefa3 = new Tarefa({
 const tarefasPadrao = [tarefa1, tarefa2, tarefa3]
 
 app.get('/', (req, res) => {
-  const dia = data.obterDataCompleta()
-
   // Busca todas as tarefas na coleção tarefas
   Tarefa.find({}, (erro, tarefas) => {
     if (tarefas.length === 0) {
@@ -72,35 +67,79 @@ app.get('/', (req, res) => {
       })
       res.redirect('/')
     } else {
-      res.render('lista', { tituloLista: dia, minhasTarefas: tarefas })
+      res.render('lista', { tituloLista: 'Hoje', minhasTarefas: tarefas })
     }
   })
 })
 
 app.post('/', (req, res) => {
   const novoItem = req.body.tarefa
+  const nomeLista = req.body.lista
 
   const novaTarefa = new Tarefa({
     nome: novoItem,
   })
 
-  novaTarefa.save()
-
-  res.redirect('/')
-
-  // if (req.body.lista === 'Trabalho') {
-  //   tarefasTrabalho.push(tarefa)
-  //   res.redirect('/trabalho')
-  // } else {
-  //   tarefas.push(tarefa)
-  //   res.redirect('/')
-  // }
+  if (nomeLista === 'Hoje') {
+    novaTarefa.save()
+    res.redirect('/')
+  } else {
+    Lista.findOne({ nome: nomeLista }, (erro, listaEncontrada) => {
+      if (!erro) {
+        listaEncontrada.itens.push(novaTarefa)
+        listaEncontrada.save()
+        res.redirect('/' + nomeLista)
+      }
+    })
+  }
 })
 
-app.get('/trabalho', (req, res) => {
-  res.render('lista', {
-    tituloLista: 'Trabalho',
-    minhasTarefas: tarefasTrabalho,
+app.post('/remover', (req, res) => {
+  const idItemMarcado = req.body.checkbox
+  const nomeLista = req.body.listaNome
+  console.log(nomeLista)
+
+  if (nomeLista === 'Hoje') {
+    // Remove um item da coleção tarefas usando o modelo
+    Tarefa.findOneAndRemove({ _id: idItemMarcado }, (erros) => {
+      if (!erros) {
+        res.redirect('/')
+      }
+    })
+  } else {
+    Lista.findOneAndUpdate(
+      { nome: nomeLista },
+      { $pull: { itens: { _id: idItemMarcado } } },
+      (erro, listaEncontrada) => {
+        if (!erro) {
+          res.redirect('/' + nomeLista)
+        }
+      }
+    )
+  }
+})
+
+app.get('/:nomeLista', (req, res) => {
+  const nomeListaPersonalizada = req.params.nomeLista
+
+  Lista.findOne({ nome: nomeListaPersonalizada }, (erro, listaEncontrada) => {
+    if (!erro) {
+      if (!listaEncontrada) {
+        // Cria uma nova lista
+        const novaLista = new Lista({
+          nome: nomeListaPersonalizada,
+          itens: tarefasPadrao,
+        })
+        novaLista.save()
+        res.redirect('/' + nomeListaPersonalizada)
+      } else {
+        // Exibe a lista
+        res.render('lista', {
+          tituloLista: listaEncontrada.nome,
+          minhasTarefas: listaEncontrada.itens,
+        })
+      }
+    }
   })
 })
 

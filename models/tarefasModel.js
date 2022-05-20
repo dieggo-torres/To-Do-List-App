@@ -2,14 +2,28 @@ const mongoose = require('mongoose')
 
 const tarefaSchema = mongoose.Schema(
   {
-    nome: {
-      type: String,
-      required: [true, 'Por favor, adicione um texto.'],
-    },
+    nome: String,
   },
   {
     timestamps: true,
   }
 )
 
-module.exports = mongoose.model('Tarefa', tarefaSchema)
+const Tarefa = mongoose.model('Tarefa', tarefaSchema)
+
+const listaSchema = mongoose.Schema(
+  {
+    nome: String,
+    itens: [tarefaSchema],
+  },
+  {
+    timestamps: true,
+  }
+)
+
+const Lista = mongoose.model('Lista', listaSchema)
+
+module.exports = {
+  Tarefa,
+  Lista,
+}

@@ -9,10 +9,13 @@
     <!-- Lista de tarefas -->
     <div class="box">
       <% minhasTarefas.forEach(tarefa => { %>
-        <div class="item">
-          <input type="checkbox">
-          <p><%= tarefa.nome %></p>
-        </div>
+        <form action="/remover" method="post">
+            <div class="item">
+              <input type="checkbox" name="checkbox" value="<%= tarefa._id %>" onChange="this.form.submit()">
+              <p><%= tarefa.nome %></p>
+            </div>
+            <input type="hidden" name="listaNome" value="<%= tituloLista %>"></input>
+        </form>
       <% }) %>
 
       <!-- Campo para inserir nova tarefa -->
