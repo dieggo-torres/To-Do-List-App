@@ -13,6 +13,9 @@ const mongoose = require('mongoose')
 // Importa o módulo path para facilitar o trabalho com caminhos
 const path = require('path')
 
+// Importa o módulo loadash
+const _ = require('lodash')
+
 // Define a porta em que o servidor express ouve por requisições
 const porta = process.env.PORT || 3000
 
@@ -120,7 +123,7 @@ app.post('/remover', (req, res) => {
 })
 
 app.get('/:nomeLista', (req, res) => {
-  const nomeListaPersonalizada = req.params.nomeLista
+  const nomeListaPersonalizada = _.capitalize(req.params.nomeLista)
 
   Lista.findOne({ nome: nomeListaPersonalizada }, (erro, listaEncontrada) => {
     if (!erro) {
