@@ -1,44 +1,6 @@
-// Importa o módulo express
-const express = require('express')
-
-// Importa o módulo dotenv para  carregar variáveis de ambiente
-const dotenv = require('dotenv').config()
-
-// Importa o módulo colors para formatação de textos no console
-const colors = require('colors')
-
-// Importa o módulo mongoose para interação com o MongoDB
-const mongoose = require('mongoose')
-
-// Importa o módulo path para facilitar o trabalho com caminhos
-const path = require('path')
-
-// Importa o módulo loadash
 const _ = require('lodash')
 
-// Define a porta em que o servidor express ouve por requisições
-const porta = process.env.PORT || 3000
-
-// Importa o arquivo com a configuração do banco de dados
-const conectarDB = require('./config/db')
-
-// Importa o arquivo que contém os modelos
-const { Tarefa, Lista } = require('./models/tarefasModel')
-
-// Cria uma instância do express
-const app = express()
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// Faz o servidor usar uma pasta que contém arquivos estáticos
-app.use(express.static('public'))
-
-// Define o view engine como ejs
-app.set('view engine', 'ejs')
-
-// Faz a conexão com o banco de dados (MongoDB Atlas)
-conectarDB()
+const { Tarefa, Lista } = require('../models/tarefasModel')
 
 // Tarefas padrão
 const tarefa1 = new Tarefa({
@@ -56,13 +18,14 @@ const tarefa3 = new Tarefa({
 // Array com as tarefas padrão
 const tarefasPadrao = [tarefa1, tarefa2, tarefa3]
 
-app.get('/', (req, res) => {
-  // Busca todas as tarefas na coleção tarefas
+// @desc     GET lista padrão
+// @route    GET /lista
+// @access   Public
+const mostrarListaPadrao = (req, res) => {
   Tarefa.find({}, (erro, tarefas) => {
     if (tarefas.length === 0) {
-      // Insere os items do array na coleção tarefas
       Tarefa.insertMany(tarefasPadrao, (erro) => {
-        if (erro) {
+        if (!erro) {
           console.log(erro)
         } else {
           console.log('As tarefas foram adicionadas com sucesso.')
@@ -73,9 +36,12 @@ app.get('/', (req, res) => {
       res.render('lista', { tituloLista: 'Hoje', minhasTarefas: tarefas })
     }
   })
-})
+}
 
-app.post('/', (req, res) => {
+// @desc     POST
+// @route    POST /lista
+// @access   Public
+const criarNovaTarefa = (req, res) => {
   const novoItem = req.body.tarefa
   const nomeLista = req.body.lista
 
@@ -95,15 +61,16 @@ app.post('/', (req, res) => {
       }
     })
   }
-})
+}
 
-app.post('/remover', (req, res) => {
+// @desc     POST
+// @route    POST /lista/remover
+// @access   Public
+const removerTarefa = (req, res) => {
   const idItemMarcado = req.body.checkbox
   const nomeLista = req.body.listaNome
-  console.log(nomeLista)
 
   if (nomeLista === 'Hoje') {
-    // Remove um item da coleção tarefas usando o modelo
     Tarefa.findOneAndRemove({ _id: idItemMarcado }, (erros) => {
       if (!erros) {
         res.redirect('/')
@@ -120,15 +87,17 @@ app.post('/remover', (req, res) => {
       }
     )
   }
-})
+}
 
-app.get('/:nomeLista', (req, res) => {
+// @desc     GET lista padrão
+// @route    GET /lista/:nomeLista
+// @access   Public
+const mostrarListaPersonalizada = (req, res) => {
   const nomeListaPersonalizada = _.capitalize(req.params.nomeLista)
 
   Lista.findOne({ nome: nomeListaPersonalizada }, (erro, listaEncontrada) => {
     if (!erro) {
       if (!listaEncontrada) {
-        // Cria uma nova lista
         const novaLista = new Lista({
           nome: nomeListaPersonalizada,
           itens: tarefasPadrao,
@@ -136,7 +105,6 @@ app.get('/:nomeLista', (req, res) => {
         novaLista.save()
         res.redirect('/' + nomeListaPersonalizada)
       } else {
-        // Exibe a lista
         res.render('lista', {
           tituloLista: listaEncontrada.nome,
           minhasTarefas: listaEncontrada.itens,
@@ -144,12 +112,11 @@ app.get('/:nomeLista', (req, res) => {
       }
     }
   })
-})
+}
 
-app.get('/sobre', (req, res) => {
-  res.render('sobre')
-})
-
-app.listen(porta, () => {
-  console.log(`Servidor Express ouvindo na porta ${porta}.`)
-})
+module.exports = {
+  mostrarListaPadrao,
+  criarNovaTarefa,
+  removerTarefa,
+  mostrarListaPersonalizada,
+}
