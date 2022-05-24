@@ -1,18 +1,18 @@
-const _ = require('lodash')
+const _ = require("lodash")
 
-const { Tarefa, Lista } = require('../models/tarefasModel')
+const { Tarefa, Lista } = require("../models/tarefasModel")
 
 // Tarefas padrão
 const tarefa1 = new Tarefa({
-  nome: 'Bem-vindo(a) a seu app de lista de tarefas!',
+  nome: "Bem-vindo(a) a seu app de lista de tarefas!",
 })
 
 const tarefa2 = new Tarefa({
-  nome: 'Pressione o botão + para adicionar uma nova tarefa.',
+  nome: "Pressione o botão + para adicionar uma nova tarefa.",
 })
 
 const tarefa3 = new Tarefa({
-  nome: '<-- Pressione este botão para remover uma tarefa.',
+  nome: "<-- Pressione este botão para remover uma tarefa.",
 })
 
 // Array com as tarefas padrão
@@ -26,14 +26,14 @@ const mostrarListaPadrao = (req, res) => {
     if (tarefas.length === 0) {
       Tarefa.insertMany(tarefasPadrao, (erro) => {
         if (!erro) {
-          console.log(erro)
+          console.log("As tarefas foram adicionadas com sucesso.")
         } else {
-          console.log('As tarefas foram adicionadas com sucesso.')
+          console.log(erro)
         }
       })
-      res.redirect('/')
+      res.redirect("/")
     } else {
-      res.render('lista', { tituloLista: 'Hoje', minhasTarefas: tarefas })
+      res.render("lista", { tituloLista: "Hoje", minhasTarefas: tarefas })
     }
   })
 }
@@ -49,15 +49,15 @@ const criarNovaTarefa = (req, res) => {
     nome: novoItem,
   })
 
-  if (nomeLista === 'Hoje') {
+  if (nomeLista === "Hoje") {
     novaTarefa.save()
-    res.redirect('/')
+    res.redirect("/")
   } else {
     Lista.findOne({ nome: nomeLista }, (erro, listaEncontrada) => {
       if (!erro) {
         listaEncontrada.itens.push(novaTarefa)
         listaEncontrada.save()
-        res.redirect('/' + nomeLista)
+        res.redirect("/" + nomeLista)
       }
     })
   }
@@ -70,10 +70,10 @@ const removerTarefa = (req, res) => {
   const idItemMarcado = req.body.checkbox
   const nomeLista = req.body.listaNome
 
-  if (nomeLista === 'Hoje') {
+  if (nomeLista === "Hoje") {
     Tarefa.findOneAndRemove({ _id: idItemMarcado }, (erros) => {
       if (!erros) {
-        res.redirect('/')
+        res.redirect("/")
       }
     })
   } else {
@@ -82,7 +82,7 @@ const removerTarefa = (req, res) => {
       { $pull: { itens: { _id: idItemMarcado } } },
       (erro, listaEncontrada) => {
         if (!erro) {
-          res.redirect('/' + nomeLista)
+          res.redirect("/" + nomeLista)
         }
       }
     )
@@ -103,9 +103,9 @@ const mostrarListaPersonalizada = (req, res) => {
           itens: tarefasPadrao,
         })
         novaLista.save()
-        res.redirect('/' + nomeListaPersonalizada)
+        res.redirect("/" + nomeListaPersonalizada)
       } else {
-        res.render('lista', {
+        res.render("lista", {
           tituloLista: listaEncontrada.nome,
           minhasTarefas: listaEncontrada.itens,
         })

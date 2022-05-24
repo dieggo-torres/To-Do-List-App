@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express")
 const router = express.Router()
 
 const {
@@ -6,10 +6,10 @@ const {
   criarNovaTarefa,
   removerTarefa,
   mostrarListaPersonalizada,
-} = require('../controllers/handlers')
+} = require("../controllers/handlers")
 
-router.route('/').get(mostrarListaPadrao).post(criarNovaTarefa)
-router.post('/remover', removerTarefa)
-router.get('/:nomeLista', mostrarListaPersonalizada)
+router.route("/").get(mostrarListaPadrao).post(criarNovaTarefa)
+router.post("/remover", removerTarefa)
+router.get("/:nomeLista", mostrarListaPersonalizada)
 
 module.exports = router

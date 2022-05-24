@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose")
 
 const tarefaSchema = mongoose.Schema(
   {
@@ -9,7 +9,7 @@ const tarefaSchema = mongoose.Schema(
   }
 )
 
-const Tarefa = mongoose.model('Tarefa', tarefaSchema)
+const Tarefa = mongoose.model("Tarefa", tarefaSchema)
 
 const listaSchema = mongoose.Schema(
   {
@@ -21,7 +21,7 @@ const listaSchema = mongoose.Schema(
   }
 )
 
-const Lista = mongoose.model('Lista', listaSchema)
+const Lista = mongoose.model("Lista", listaSchema)
 
 module.exports = {
   Tarefa,
